@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "source": "functions"
+  },
+  "hosting": {
+    "source": "web",
+    "frameworksBackend": {
+      "region": "us-east1"
+    }
+  }
+}
