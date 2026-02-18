@@ -1,10 +1,14 @@
 "use client";
 
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,13 +16,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const googleProvider = new GoogleAuthProvider();
 
   useEffect(() => {
     if (!auth) return;
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        router.replace("/dashboard");
+        router.replace("/web/dashboard");
       }
     });
 
@@ -34,9 +39,25 @@ export default function LoginPage() {
         throw new Error("Authentication unavailable.");
       }
       await signInWithEmailAndPassword(auth, email, password);
-      router.replace("/dashboard");
+      router.replace("/web/dashboard");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Login failed.";
+      setError(message);
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      if (!auth) {
+        throw new Error("Authentication unavailable.");
+      }
+      await signInWithPopup(auth, googleProvider);
+      router.replace("/web/dashboard");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Google sign-in failed.";
       setError(message);
       setLoading(false);
     }
@@ -80,6 +101,19 @@ export default function LoginPage() {
             className="w-full rounded-xl bg-cyan-400/90 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Sign in"}
+          </button>
+          <div className="flex items-center gap-3 py-1">
+            <span className="h-px flex-1 bg-white/15" />
+            <span className="text-xs uppercase tracking-[0.2em] text-slate-500">or</span>
+            <span className="h-px flex-1 bg-white/15" />
+          </div>
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full rounded-xl border border-white/20 bg-transparent py-3 text-sm font-semibold text-white transition hover:border-white/40 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Continue with Google
           </button>
         </form>
       </div>

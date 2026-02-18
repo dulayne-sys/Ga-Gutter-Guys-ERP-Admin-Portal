@@ -3,24 +3,23 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
 
-type FirebaseConfig = {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-};
-
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+const firebasePublicDefaults = {
   apiKey: "AIzaSyDRPwKIZA6owdYWyRprF1k2gfiyXnhyvkw",
   authDomain: "ga-gutter-guys-admin.firebaseapp.com",
   projectId: "ga-gutter-guys-admin",
   storageBucket: "ga-gutter-guys-admin.firebasestorage.app",
   messagingSenderId: "733578728575",
   appId: "1:733578728575:web:ec94a0ef068a80ea095b4a",
-  measurementId: "G-RS4D30EYJT"
+} as const;
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? firebasePublicDefaults.apiKey,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? firebasePublicDefaults.authDomain,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? firebasePublicDefaults.projectId,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? firebasePublicDefaults.storageBucket,
+  messagingSenderId:
+    process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? firebasePublicDefaults.messagingSenderId,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? firebasePublicDefaults.appId,
 };
 
 const isBrowser = typeof window !== "undefined";

@@ -4,6 +4,7 @@ import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { auth } from "@/lib/firebase";
+import { ShieldAiWidget } from "@/components/ShieldAiWidget";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -96,6 +97,7 @@ export const AuthGate = ({ title, children }: AuthGateProps) => {
         </nav>
         <main className="space-y-6">{children}</main>
       </div>
+      <ShieldAiWidget />
     </div>
   );
 };

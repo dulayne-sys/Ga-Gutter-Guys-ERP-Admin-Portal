@@ -64,6 +64,14 @@ node_modules/
 
 # dotenv environment variables file
 .env
+.env.local
+.env.*
+!.env*.example
 
 # dataconnect generated files
 .dataconnect
+
+# Local credentials and operator scripts
+service-account.json
+scripts/setup-env.sh
+

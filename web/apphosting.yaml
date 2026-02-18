@@ -1,33 +1,50 @@
-# Settings for Backend (on Cloud Run).
-# See https://firebase.google.com/docs/app-hosting/configure#cloud-run
 runConfig:
   minInstances: 0
-  # maxInstances: 100
-  # concurrency: 80
-  # cpu: 1
-  # memoryMiB: 512
 
-# Environment variables and secrets.
-# env:
-  # Configure environment variables.
-  # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
-  # - variable: MESSAGE
-  #   value: Hello world!
-  #   availability:
-  #     - BUILD
-  #     - RUNTIME
+env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyDRPwKIZA6owdYWyRprF1k2gfiyXnhyvkw"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "ga-gutter-guys-admin.firebaseapp.com"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "ga-gutter-guys-admin"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "ga-gutter-guys-admin.firebasestorage.app"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "733578728575"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:733578728575:web:ec94a0ef068a80ea095b4a"
+    availability:
+      - BUILD
+      - RUNTIME
 
-  # Grant access to secrets in Cloud Secret Manager.
-  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
-  # - variable: MY_SECRET
-  #   secret: mySecretRef
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDRPwKIZA6owdYWyRprF1k2gfiyXnhyvkw",
-  authDomain: "ga-gutter-guys-admin.firebaseapp.com",
-  projectId: "ga-gutter-guys-admin",
-  storageBucket: "ga-gutter-guys-admin.firebasestorage.app",
-  messagingSenderId: "733578728575",
-  appId: "1:733578728575:web:ec94a0ef068a80ea095b4a",
-  measurementId: "G-RS4D30EYJT"
-};
+  - variable: NEXT_PUBLIC_FUNCTIONS_REGION
+    value: "us-east1"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FUNCTIONS_BASE_URL
+    value: "https://us-east1-ga-gutter-guys-admin.cloudfunctions.net"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    value: "AIzaSyAdjpiYRkPId6PSCmPnWIjUicu_DvMNj7U"
+    availability:
+      - BUILD
+      - RUNTIME

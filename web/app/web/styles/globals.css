@@ -1,0 +1,88 @@
+.web-shell-card {
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 1rem;
+}
+
+.web-shell-muted {
+  color: rgb(148 163 184);
+}
+
+.web-shell-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  color: rgb(248 250 252);
+}
+
+:root.theme-light .bg-slate-950 {
+  background-color: rgb(241 245 249) !important;
+}
+
+:root.theme-light .bg-slate-900 {
+  background-color: rgb(226 232 240) !important;
+}
+
+:root.theme-light .bg-slate-900\/70 {
+  background-color: rgba(226, 232, 240, 0.85) !important;
+}
+
+:root.theme-light .bg-slate-900\/40 {
+  background-color: rgba(226, 232, 240, 0.65) !important;
+}
+
+:root.theme-light .bg-slate-950\/90 {
+  background-color: rgba(241, 245, 249, 0.95) !important;
+}
+
+:root.theme-light .bg-slate-950\/70 {
+  background-color: rgba(241, 245, 249, 0.75) !important;
+}
+
+:root.theme-light .bg-slate-950\/60 {
+  background-color: rgba(241, 245, 249, 0.65) !important;
+}
+
+:root.theme-light .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+:root.theme-light .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.07) !important;
+}
+
+:root.theme-light .border-white\/10 {
+  border-color: rgba(15, 23, 42, 0.14) !important;
+}
+
+:root.theme-light .border-white\/15 {
+  border-color: rgba(15, 23, 42, 0.18) !important;
+}
+
+:root.theme-light .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.24) !important;
+}
+
+:root.theme-light .text-white {
+  color: rgb(15 23 42) !important;
+}
+
+:root.theme-light .text-slate-100 {
+  color: rgb(30 41 59) !important;
+}
+
+:root.theme-light .text-slate-200 {
+  color: rgb(51 65 85) !important;
+}
+
+:root.theme-light .text-slate-300 {
+  color: rgb(71 85 105) !important;
+}
+
+:root.theme-light .text-slate-400 {
+  color: rgb(100 116 139) !important;
+}
+
+:root.theme-light .text-slate-500 {
+  color: rgb(100 116 139) !important;
+}

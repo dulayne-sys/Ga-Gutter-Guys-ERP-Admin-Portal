@@ -16,7 +16,8 @@
   "main": "lib/index.js",
   "dependencies": {
     "firebase-admin": "^13.6.0",
-    "firebase-functions": "^7.0.0"
+    "firebase-functions": "^7.0.0",
+    "node-quickbooks": "^2.0.48"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

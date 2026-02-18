@@ -1,12 +1,4 @@
 rules_version = '2';
-Collection: license
-Document: current
-{
-  active: true,
-  plan: "pro",
-  expiresAt: null
-}
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -14,42 +6,93 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function role() {
-      return request.auth.token.role;
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function getUserRole() {
+      return userDoc().data.role;
     }
 
     function isAdmin() {
-      return role() == 'admin';
+      return isSignedIn() && getUserRole() == 'admin';
     }
 
-    match /settings/{docId} {
-      allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && isAdmin();
+    function isSales() {
+      return isSignedIn() && (getUserRole() == 'sales' || getUserRole() == 'admin');
+    }
+
+    function isField() {
+      return isSignedIn() && (getUserRole() == 'field' || getUserRole() == 'admin');
+    }
+
+    function isOwner(ownerId) {
+      return request.auth.uid == ownerId;
     }
 
     match /users/{userId} {
-      allow read: if isSignedIn() && (isAdmin() || request.auth.uid == userId);
-      allow create, update, delete: if isSignedIn() && isAdmin();
-    }
-
-    match /jobs/{jobId} {
       allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || isOwner(userId);
+      allow delete: if isAdmin();
     }
 
-    match /routes/{routeDate} {
+    match /leads/{leadId} {
       allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn() && isAdmin();
+      allow create: if isSales();
+      allow update: if isAdmin() || (isSales() && resource.data.assignedTo == request.auth.uid);
+      allow delete: if isAdmin();
     }
 
-    match /license/{docId} {
-      allow read: if isSignedIn() && isAdmin();
-      allow create, update, delete: if isSignedIn() && isAdmin();
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create: if isSales();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
 
     match /estimates/{estimateId} {
       allow read: if isSignedIn();
-      allow create, update, delete: if isSignedIn();
+      allow create: if isSales();
+      allow update: if isAdmin() || (isSales() && resource.data.createdBy == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    match /jobs/{jobId} {
+      allow read: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || (isField() && request.auth.uid in resource.data.schedule.crew);
+      allow delete: if isAdmin();
+    }
+
+    match /invoices/{invoiceId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /materials/{materialId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /vendors/{vendorId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /settings/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /license/{docId} {
+      allow read: if isSignedIn() && isAdmin();
+      allow write: if isSignedIn() && isAdmin();
+    }
+
+    match /routes/{routeId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
 
     match /{document=**} {
