@@ -472,7 +472,7 @@ export default function CalendarPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-semibold text-white">Calendar</h1>
+          <h1 className="text-2xl font-semibold text-white">Calendar</h1>
           <p className="mt-1 text-sm text-slate-400">Daily schedule, routing, and crew planning.</p>
         </div>
         <div className="flex items-center gap-2">

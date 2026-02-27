@@ -228,7 +228,7 @@ export default function InvoicesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-semibold text-white">Invoices</h1>
+          <h1 className="text-2xl font-semibold text-white">Invoices</h1>
           <p className="mt-1 text-sm text-slate-400">Invoice management with QuickBooks sync.</p>
         </div>
         <div className="flex gap-2">

@@ -92,8 +92,8 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold text-white">Profile</h1>
-        <p className="mt-1 text-sm text-slate-400">Manage your account display name and avatar.</p>
+        <h1 className="text-2xl font-semibold text-white">Profile</h1>
+        <p className="mt-1 text-xs text-slate-400">Manage your account display name and avatar.</p>
       </div>
 
       <ProfileHeaderCard actions={[{ label: "Dashboard", href: "/web/dashboard" }]} />

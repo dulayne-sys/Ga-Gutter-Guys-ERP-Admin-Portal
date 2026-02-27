@@ -80,7 +80,16 @@ export default function CrmPage() {
       winRate: Number(winRate.toFixed(1)),
       openCount,
       closedThisMonth,
-      avgDealSize: 2450,
+      avgDealSize: wins > 0
+        ? Math.round(
+            leads
+              .filter((l) => l.status === "won")
+              .reduce((sum, l) => {
+                const pricing = l.pricing as { grandTotal?: number } | undefined;
+                return sum + Number(pricing?.grandTotal ?? 0);
+              }, 0) / wins
+          )
+        : 0,
     };
   }, [leads]);
 
@@ -152,8 +161,8 @@ export default function CrmPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">CRM</h1>
-          <p className="mt-1 text-sm text-slate-400">Lead pipeline and sales opportunities</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white">CRM</h1>
+          <p className="mt-1 text-xs text-slate-400">Lead pipeline and sales opportunities</p>
         </div>
         <div className="flex gap-3">
           <Link href="/web/sales-home" className="rounded-lg bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10">

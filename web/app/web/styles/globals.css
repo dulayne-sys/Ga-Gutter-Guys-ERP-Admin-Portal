@@ -68,61 +68,67 @@
   background-color: rgba(255, 255, 255, 0.97) !important;
 }
 
-:root.theme-light .bg-white\/5 {
+:root.theme-light main .bg-white\/5 {
   background-color: #FFFFFF !important;
 }
 
-:root.theme-light .bg-white\/10 {
+:root.theme-light main .bg-white\/10 {
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
-:root.theme-light .bg-white\/\[0\.03\] {
+:root.theme-light main .bg-white\/\[0\.03\] {
   background-color: rgba(0, 0, 0, 0.015) !important;
 }
 
 /* --- Borders --- */
-:root.theme-light .border-white\/5 {
+:root.theme-light main .border-white\/5 {
   border-color: #EDEBE8 !important;
 }
 
-:root.theme-light .border-white\/10 {
+:root.theme-light main .border-white\/10 {
   border-color: #E5E0DA !important;
 }
 
-:root.theme-light .border-white\/15 {
+:root.theme-light main .border-white\/15 {
   border-color: #DDD8D2 !important;
 }
 
-:root.theme-light .border-white\/20 {
+:root.theme-light main .border-white\/20 {
   border-color: #D4CFC8 !important;
 }
 
 /* --- Text --- */
-:root.theme-light .text-white {
+/* Base dark text for main content area in light mode */
+:root.theme-light main {
+  color: #1E1F2E;
+}
+
+/* Scope text-white override to main content only — sidebar uses explicit hex colors */
+:root.theme-light main .text-white {
   color: #1E1F2E !important;
 }
 
-:root.theme-light .text-slate-100 {
+:root.theme-light main .text-slate-100 {
   color: #2A2B3D !important;
 }
 
-:root.theme-light .text-slate-200 {
+:root.theme-light main .text-slate-200 {
   color: #3E4058 !important;
 }
 
-:root.theme-light .text-slate-300 {
+:root.theme-light main .text-slate-300 {
   color: #4A4C60 !important;
 }
 
-:root.theme-light .text-slate-400 {
+:root.theme-light main .text-slate-400 {
   color: #64667A !important;
 }
 
-:root.theme-light .text-slate-500 {
+:root.theme-light main .text-slate-500 {
   color: #7B7D91 !important;
 }
 
-:root.theme-light .text-slate-900 {
+:root.theme-light main .text-slate-900 {
   color: #1E1F2E !important;
 }
 
@@ -135,7 +141,7 @@
   background-color: rgba(99, 102, 241, 0.2) !important;
 }
 
-:root.theme-light .text-slate-950 {
+:root.theme-light main .text-slate-950 {
   color: #0F172A !important;
 }
 
@@ -247,39 +253,39 @@
 }
 
 /* --- Hover & Interactive States --- */
-:root.theme-light .hover\:bg-white\/5:hover {
+:root.theme-light main .hover\:bg-white\/5:hover {
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
-:root.theme-light .hover\:bg-white\/10:hover {
+:root.theme-light main .hover\:bg-white\/10:hover {
   background-color: rgba(0, 0, 0, 0.07) !important;
 }
 
-:root.theme-light .hover\:border-white\/20:hover {
+:root.theme-light main .hover\:border-white\/20:hover {
   border-color: #D4CFC8 !important;
 }
 
-:root.theme-light .hover\:border-white\/40:hover {
+:root.theme-light main .hover\:border-white\/40:hover {
   border-color: #C0BAB2 !important;
 }
 
-:root.theme-light .hover\:bg-slate-800:hover {
+:root.theme-light main .hover\:bg-slate-800:hover {
   background-color: rgba(0, 0, 0, 0.04) !important;
 }
 
-:root.theme-light .hover\:bg-cyan-300:hover {
+:root.theme-light main .hover\:bg-cyan-300:hover {
   background-color: #4F46E5 !important;
 }
 
-:root.theme-light .hover\:bg-cyan-500\/30:hover {
+:root.theme-light main .hover\:bg-cyan-500\/30:hover {
   background-color: rgba(99, 102, 241, 0.12) !important;
 }
 
-:root.theme-light .hover\:text-white:hover {
+:root.theme-light main .hover\:text-white:hover {
   color: #1E1F2E !important;
 }
 
-:root.theme-light .hover\:text-slate-200:hover {
+:root.theme-light main .hover\:text-slate-200:hover {
   color: #3E4058 !important;
 }
 
@@ -308,11 +314,11 @@
 }
 
 /* --- Premium Card Shadows (auto-applied via border-radius) --- */
-:root.theme-light .rounded-2xl {
+:root.theme-light main .rounded-2xl {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-:root.theme-light .rounded-xl {
+:root.theme-light main .rounded-xl {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
 }
 
@@ -342,10 +348,10 @@
 }
 
 /* --- Animate cards on load --- */
-:root.theme-light .rounded-2xl {
+:root.theme-light main .rounded-2xl {
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-:root.theme-light .rounded-2xl:hover {
+:root.theme-light main .rounded-2xl:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
 }

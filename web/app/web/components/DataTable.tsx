@@ -50,9 +50,9 @@ export function DataTable({ title, columns, rows, loading, searchable = true, on
   }, [query, rows]);
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold tracking-tight text-white">{title}</h3>
+    <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold tracking-tight text-white">{title}</h3>
         {searchable ? (
           <input
             value={query}

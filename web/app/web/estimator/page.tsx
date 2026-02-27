@@ -131,7 +131,7 @@ export default function WebEstimatorPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Professional Estimation Workflow</p>
-            <h1 className="mt-2 text-3xl font-semibold text-white">Estimator</h1>
+            <h1 className="mt-2 text-2xl font-semibold text-white">Estimator</h1>
           </div>
           <div className="rounded-2xl border border-indigo-300/30 bg-indigo-500/10 px-4 py-2 text-xs text-indigo-100">
             Step {stepIndex + 1} of {steps.length}

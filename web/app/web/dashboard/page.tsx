@@ -66,9 +66,9 @@ export default function WebDashboardPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Welcome back</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white">Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-400">Here is your live operations snapshot.</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Welcome back</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white">Dashboard</h1>
+        <p className="mt-1 text-xs text-slate-400">Here is your live operations snapshot.</p>
       </div>
 
       {error ? (
