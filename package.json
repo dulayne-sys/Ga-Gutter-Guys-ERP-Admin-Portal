@@ -1,0 +1,23 @@
+{
+  "name": "ga-gutter-guys-erp-admin-portal",
+  "private": true,
+  "scripts": {
+    "dev": "cd web && npm run dev",
+    "build": "npm run build:functions && npm run build:web",
+    "build:web": "cd web && npm run build",
+    "build:functions": "cd functions && npm run build",
+    "lint": "cd web && npm run lint && cd ../functions && npm run lint",
+    "deploy": "firebase deploy",
+    "deploy:web": "firebase deploy --only hosting",
+    "deploy:functions": "firebase deploy --only functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.6.0",
+    "firebase": "^12.9.0"
+  },
+  "devDependencies": {
+    "googleapis": "^157.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

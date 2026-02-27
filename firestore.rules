@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function getUserRole() {
+      return userDoc().data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && getUserRole() == 'admin';
+    }
+
+    function isSales() {
+      return isSignedIn() && (getUserRole() == 'sales' || getUserRole() == 'admin');
+    }
+
+    function isField() {
+      return isSignedIn() && (getUserRole() == 'field' || getUserRole() == 'admin');
+    }
+
+    function isOwner(ownerId) {
+      return request.auth.uid == ownerId;
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || isOwner(userId);
+      allow delete: if isAdmin();
+    }
+
+    match /leads/{leadId} {
+      allow read: if isSignedIn();
+      allow create: if isSales();
+      allow update: if isAdmin() || (isSales() && resource.data.assignedTo == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create: if isSales();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /estimates/{estimateId} {
+      allow read: if isSignedIn();
+      allow create: if isSales();
+      allow update: if isAdmin() || (isSales() && resource.data.createdBy == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    match /jobs/{jobId} {
+      allow read: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || (isField() && request.auth.uid in resource.data.schedule.crew);
+      allow delete: if isAdmin();
+    }
+
+    match /invoices/{invoiceId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /materials/{materialId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /vendors/{vendorId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /settings/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /license/{docId} {
+      allow read: if isSignedIn() && isAdmin();
+      allow write: if isSignedIn() && isAdmin();
+    }
+
+    match /routes/{routeId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Calendar events (synced from Google Calendar and CRM)
+    match /calendarEvents/{eventId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
+    // OAuth state docs are server-side only (Cloud Functions use admin SDK).
+    // Deny client access to prevent state tampering.
+    match /qboAuthStates/{stateId} {
+      allow read, write: if false;
+    }
+
+    match /gcalAuthStates/{stateId} {
+      allow read, write: if false;
+    }
+
+    // Integration connection docs (QBO, Google Calendar tokens).
+    // Admin can read status; writes are server-side only.
+    match /integrations/{integrationId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

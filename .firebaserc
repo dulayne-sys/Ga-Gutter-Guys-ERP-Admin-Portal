@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "ga-gutter-guys-admin",
+    "prod": "ga-gutter-guys-admin"
+  },
+  "targets": {},
+  "etags": {}
+}

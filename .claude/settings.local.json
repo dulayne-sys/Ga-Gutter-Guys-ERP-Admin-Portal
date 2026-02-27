@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(nvm ls:*)",
+      "Bash(fnm ls:*)",
+      "Bash(brew reinstall:*)",
+      "Bash(npx eslint:*)"
+    ]
+  }
+}
