@@ -52,20 +52,20 @@ const navSections: NavSection[] = [
   {
     title: "CRM",
     items: [
-      { href: "/web/crm", label: "Lead Pipeline", icon: "crm" },
-      { href: "/web/sales-home", label: "Sales Pipeline", icon: "sales" },
-      { href: "/web/sales-ops", label: "Sales Ops", icon: "operations" },
-      { href: "/web/contacts", label: "Contacts", icon: "contacts" },
+      { href: "/web/crm-hub", label: "CRM Hub", icon: "crm" },
     ],
   },
   {
     title: "Operations",
     items: [
       { href: "/web/active-jobs", label: "Active Jobs", icon: "jobs" },
-      { href: "/web/work-orders", label: "Work Orders", icon: "workOrders" },
-      { href: "/web/job-erp", label: "Job ERP", icon: "erp" },
-      { href: "/web/invoices", label: "Invoices", icon: "invoices" },
       { href: "/web/procurements", label: "Procurements", icon: "procurements" },
+    ],
+  },
+  {
+    title: "Finance",
+    items: [
+      { href: "/web/finance-hub", label: "Finance Hub", icon: "finance" },
     ],
   },
   {
@@ -91,7 +91,23 @@ export function Sidebar() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<string>("unknown");
   const [signingOut, setSigningOut] = useState(false);
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = (href: string): boolean => {
+    // CRM Hub highlights for all consolidated CRM routes
+    if (href === "/web/crm-hub") {
+      const crmRoutes = ["/web/crm-hub", "/web/crm", "/web/sales-home", "/web/sales-ops", "/web/contacts"];
+      return crmRoutes.some((r) => pathname === r || pathname.startsWith(`${r}/`));
+    }
+    // Finance Hub highlights for all consolidated finance routes
+    if (href === "/web/finance-hub") {
+      const financeRoutes = ["/web/finance-hub", "/web/job-erp", "/web/invoices"];
+      return financeRoutes.some((r) => pathname === r || pathname.startsWith(`${r}/`));
+    }
+    // Active Jobs highlights for work-orders deep link
+    if (href === "/web/active-jobs") {
+      return pathname === "/web/active-jobs" || pathname.startsWith("/web/active-jobs/") || pathname === "/web/work-orders";
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   useEffect(() => {
     if (!auth) return;
