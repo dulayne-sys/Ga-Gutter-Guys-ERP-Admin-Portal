@@ -3,6 +3,11 @@
 import { useState } from "react";
 import JobErpPage from "../job-erp/page";
 import InvoicesPage from "../invoices/page";
+import { FinanceIncomeTracker } from "../components/FinanceIncomeTracker";
+import { FinanceProjectsAwaitingBilling } from "../components/FinanceProjectsAwaitingBilling";
+import { FinanceCollectionsQueue } from "../components/FinanceCollectionsQueue";
+import { FinanceRevenueSnapshot } from "../components/FinanceRevenueSnapshot";
+import { FinanceInvoiceAging } from "../components/FinanceInvoiceAging";
 
 type FinanceTab = "dashboard" | "job-erp" | "invoices";
 
@@ -13,14 +18,14 @@ const TAB_LABELS: Record<FinanceTab, string> = {
 };
 
 export default function FinanceHubPage() {
-  const [activeTab, setActiveTab] = useState<FinanceTab>("job-erp");
+  const [activeTab, setActiveTab] = useState<FinanceTab>("dashboard");
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-semibold text-white">Finance Hub</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Financial operations — job costing, invoicing, and revenue tracking.
+          Financial command center — income tracking, billing, collections, and invoice aging.
         </p>
       </div>
 
@@ -42,54 +47,29 @@ export default function FinanceHubPage() {
         ))}
       </div>
 
-      {/* Dashboard tab — overview and navigation */}
+      {/* ── DASHBOARD TAB ── */}
       {activeTab === "dashboard" && (
-        <div className="grid gap-4 md:grid-cols-2">
-          <HubCard
-            title="Job ERP"
-            description="Comprehensive job and invoice management. Track job status, link invoices, manage QuickBooks sync, and monitor completion milestones."
-            action="Open Job ERP"
-            onAction={() => setActiveTab("job-erp")}
-          />
-          <HubCard
-            title="Invoices"
-            description="Full invoice lifecycle management. Create, track, and sync invoices with QuickBooks. Monitor payment status and aging reports."
-            action="Open Invoices"
-            onAction={() => setActiveTab("invoices")}
-          />
+        <div className="space-y-4">
+          {/* Row 1: Income Tracker (large, 2/3 width) + Projects Awaiting Billing (1/3) */}
+          <div className="grid gap-4 xl:grid-cols-[2fr_1fr]">
+            <FinanceIncomeTracker />
+            <FinanceProjectsAwaitingBilling />
+          </div>
+
+          {/* Row 2: Collections Queue + Revenue Snapshot + Aging Invoices */}
+          <div className="grid gap-4 md:grid-cols-3">
+            <FinanceCollectionsQueue />
+            <FinanceRevenueSnapshot />
+            <FinanceInvoiceAging />
+          </div>
         </div>
       )}
 
+      {/* ── JOB ERP TAB ── */}
       {activeTab === "job-erp" && <JobErpPage />}
-      {activeTab === "invoices" && <InvoicesPage />}
-    </div>
-  );
-}
 
-function HubCard({
-  title,
-  description,
-  action,
-  onAction,
-}: {
-  title: string;
-  description: string;
-  action: string;
-  onAction: () => void;
-}) {
-  return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-5">
-      <div>
-        <h3 className="text-base font-semibold text-white">{title}</h3>
-        <p className="mt-1 text-sm text-slate-400">{description}</p>
-      </div>
-      <button
-        type="button"
-        onClick={onAction}
-        className="mt-auto rounded-lg border border-indigo-400/30 bg-indigo-500/10 px-4 py-2 text-sm font-medium text-indigo-200 transition hover:bg-indigo-500/20"
-      >
-        {action}
-      </button>
+      {/* ── INVOICES TAB ── */}
+      {activeTab === "invoices" && <InvoicesPage />}
     </div>
   );
 }
