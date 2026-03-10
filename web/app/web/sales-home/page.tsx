@@ -93,6 +93,8 @@ const leadStatusFields: CrudFieldDefinition[] = [
       { label: "Estimating", value: "estimating" },
       { label: "Won", value: "won" },
       { label: "Lost", value: "lost" },
+      { label: "Completed", value: "completed" },
+      { label: "On Hold", value: "on hold" },
     ],
   },
 ];

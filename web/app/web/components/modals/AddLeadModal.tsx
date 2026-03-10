@@ -7,6 +7,29 @@ type AddLeadModalProps = {
   onSubmit: (data: Record<string, unknown>) => Promise<void>;
 };
 
+/** Normalize legacy lead source values to the current standard set. */
+export const normalizeLeadSource = (raw: string): string => {
+  const legacyMap: Record<string, string> = {
+    web: "online",
+    website: "online",
+    call: "canvaser",
+    "phone call": "canvaser",
+    ads: "other",
+    advertisement: "other",
+  };
+  const lower = (raw ?? "").toLowerCase().trim();
+  return legacyMap[lower] ?? lower;
+};
+
+/** Human-readable labels for all supported lead sources. */
+export const LEAD_SOURCE_LABELS: Record<string, string> = {
+  online: "Online",
+  canvaser: "Canvaser",
+  rep: "Rep",
+  referral: "Referral",
+  other: "Other",
+};
+
 export default function AddLeadModal({ onClose, onSubmit }: AddLeadModalProps) {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -20,7 +43,7 @@ export default function AddLeadModal({ onClose, onSubmit }: AddLeadModalProps) {
       zip: "",
     },
     propertyType: "residential",
-    leadSource: "web",
+    leadSource: "online",
     notes: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -165,10 +188,10 @@ export default function AddLeadModal({ onClose, onSubmit }: AddLeadModalProps) {
                 onChange={(event) => setFormData({ ...formData, leadSource: event.target.value })}
                 className="w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-slate-100"
               >
-                <option value="web">Website</option>
-                <option value="call">Phone Call</option>
+                <option value="online">Online</option>
+                <option value="canvaser">Canvaser</option>
+                <option value="rep">Rep</option>
                 <option value="referral">Referral</option>
-                <option value="ads">Advertisement</option>
                 <option value="other">Other</option>
               </select>
             </div>

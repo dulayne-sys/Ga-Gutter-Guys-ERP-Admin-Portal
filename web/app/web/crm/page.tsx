@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import Link from "next/link";
 import { auth, firestore } from "@/lib/firebase";
 import { DataTable } from "../components/DataTable";
 import { StatCard } from "../components/StatCard";
+import { LeadProfilePanel } from "../components/LeadProfilePanel";
 import AddLeadModal from "../components/modals/AddLeadModal";
 import { dataLoader } from "../lib/dataLoader";
 import { TABLE_DEFINITIONS } from "../lib/tableDefinitions";
@@ -22,6 +22,7 @@ export default function CrmPage() {
   const [selectedLead, setSelectedLead] = useState<LeadRow | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<UserRole>("unknown");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
@@ -152,13 +153,10 @@ export default function CrmPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">CRM</h1>
-          <p className="mt-1 text-sm text-slate-400">Lead pipeline and sales opportunities</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Lead Pipeline</h1>
+          <p className="mt-1 text-sm text-slate-400">CRM — Lead management and sales opportunities</p>
         </div>
         <div className="flex gap-3">
-          <Link href="/web/sales-home" className="rounded-lg bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10">
-            Back
-          </Link>
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
@@ -192,7 +190,7 @@ export default function CrmPage() {
           className="min-w-[260px] flex-1 rounded-lg border border-white/10 bg-slate-900/80 px-3 py-2 text-sm text-slate-100"
         />
 
-        {["new", "contacted", "scheduled", "won", "lost"].map((status) => (
+        {["new", "contacted", "scheduled", "estimating", "won", "lost", "completed", "on hold"].map((status) => (
           <button
             key={status}
             type="button"
@@ -227,11 +225,11 @@ export default function CrmPage() {
 
       <div className="table-container">
         <DataTable
-          title="Leads"
+          title="Leads — click a row to open profile"
           loading={loading}
           rows={filteredLeads}
           columns={TABLE_DEFINITIONS.leads}
-          onRowClick={setSelectedLead}
+          onRowClick={(row) => { setSelectedLead(row); setShowProfile(true); }}
           highlightRowId={String(selectedLead?.id ?? "")}
         />
       </div>
@@ -240,6 +238,17 @@ export default function CrmPage() {
         <AddLeadModal
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddLead}
+        />
+      ) : null}
+
+      {showProfile && selectedLead ? (
+        <LeadProfilePanel
+          lead={selectedLead}
+          onClose={() => setShowProfile(false)}
+          onStatusChange={async (leadId, newStatus) => {
+            await dataLoader.updateLead(leadId, { status: newStatus });
+            await loadLeads();
+          }}
         />
       ) : null}
     </div>
