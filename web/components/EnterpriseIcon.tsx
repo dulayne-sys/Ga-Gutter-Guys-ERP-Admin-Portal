@@ -27,7 +27,11 @@ type EnterpriseIconProps = {
     | "roadmap"
     | "themeLight"
     | "themeDark"
-    | "themeAuto";
+    | "themeAuto"
+    | "ai"
+    | "integrations"
+    | "finance"
+    | "upload";
   className?: string;
 };
 
@@ -105,6 +109,33 @@ const iconPaths: Record<EnterpriseIconProps["name"], React.ReactNode> = {
   ),
   themeDark: <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />,
   themeAuto: <path d="M4 18h16M6 14l3-3 3 2 5-5M12 4v3m0 10v3" />,
+  ai: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2.1 2.1M15.6 15.6l2.1 2.1M6.3 17.7l2.1-2.1M15.6 8.4l2.1-2.1" />
+    </>
+  ),
+  integrations: (
+    <>
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <path d="M17.5 14v7M14 17.5h7" />
+    </>
+  ),
+  finance: (
+    <>
+      <path d="M12 3v4m0 10v4M4.9 7.4l2.8 2.8M16.3 13.8l2.8 2.8M3 12h4m10 0h4M4.9 16.6l2.8-2.8M16.3 10.2l2.8-2.8" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  upload: (
+    <>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </>
+  ),
 };
 
 export function EnterpriseIcon({ name, className = "h-4 w-4" }: EnterpriseIconProps) {

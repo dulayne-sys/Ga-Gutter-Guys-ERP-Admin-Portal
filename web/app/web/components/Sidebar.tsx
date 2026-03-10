@@ -28,7 +28,10 @@ type NavItem = {
     | "users"
     | "profile"
     | "vendors"
-    | "settings";
+    | "settings"
+    | "ai"
+    | "integrations"
+    | "finance";
 };
 
 type NavSection = {
@@ -47,10 +50,10 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    title: "Sales & CRM",
+    title: "CRM",
     items: [
-      { href: "/web/sales-home", label: "Sales Home", icon: "sales" },
-      { href: "/web/crm", label: "CRM", icon: "crm" },
+      { href: "/web/crm", label: "Lead Pipeline", icon: "crm" },
+      { href: "/web/sales-home", label: "Sales Pipeline", icon: "sales" },
       { href: "/web/sales-ops", label: "Sales Ops", icon: "operations" },
       { href: "/web/contacts", label: "Contacts", icon: "contacts" },
     ],
@@ -66,11 +69,18 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    title: "Tools",
+    items: [
+      { href: "/web/ai-assistant", label: "AI Assistant", icon: "ai" },
+    ],
+  },
+  {
     title: "Admin",
     items: [
       { href: "/web/users", label: "Users", icon: "users" },
       { href: "/web/vendors", label: "Vendors", icon: "vendors" },
       { href: "/web/settings", label: "Settings", icon: "settings" },
+      { href: "/web/integrations", label: "Integrations", icon: "integrations" },
     ],
   },
 ];
