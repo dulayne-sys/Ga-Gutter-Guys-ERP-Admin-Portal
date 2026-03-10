@@ -12,6 +12,7 @@ export function QuickBooksStatus({ compact = false }: QuickBooksStatusProps) {
   const [realmId, setRealmId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [connectError, setConnectError] = useState<string | null>(null);
 
   const refresh = async () => {
     setLoading(true);
@@ -33,9 +34,12 @@ export function QuickBooksStatus({ compact = false }: QuickBooksStatusProps) {
 
   const handleConnect = async () => {
     setBusy(true);
+    setConnectError(null);
     try {
       const authUrl = await startQuickBooksAuth();
       window.location.assign(authUrl);
+    } catch (err) {
+      setConnectError(err instanceof Error ? err.message : "Failed to start QuickBooks authorization.");
     } finally {
       setBusy(false);
     }
@@ -58,6 +62,9 @@ export function QuickBooksStatus({ compact = false }: QuickBooksStatusProps) {
         {loading ? "Checking..." : connected ? "Connected" : "Not Connected"}
       </p>
       {!compact ? <p className="mt-1 text-xs text-slate-400">{realmId ? `Company ID: ${realmId}` : "Connect your QuickBooks company account."}</p> : null}
+      {connectError ? (
+        <p className="mt-1 text-xs text-rose-300">{connectError}</p>
+      ) : null}
       <button
         type="button"
         onClick={connected ? handleDisconnect : handleConnect}

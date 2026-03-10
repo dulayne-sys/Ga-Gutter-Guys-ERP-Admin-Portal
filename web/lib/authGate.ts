@@ -20,9 +20,13 @@ export const requireUser = () => {
 };
 
 export const getToken = async (): Promise<string | null> => {
-  if (!auth || !auth.currentUser) {
-    return null;
-  }
+  if (!auth) return null;
+
+  // Wait for Firebase Auth to finish restoring the persisted session.
+  // auth.currentUser is null until this resolves, regardless of login state.
+  await auth.authStateReady();
+
+  if (!auth.currentUser) return null;
 
   return auth.currentUser.getIdToken();
 };
