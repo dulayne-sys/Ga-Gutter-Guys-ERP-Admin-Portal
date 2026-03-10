@@ -12,11 +12,14 @@
     "deploy:functions": "firebase deploy --only functions"
   },
   "dependencies": {
-    "firebase-admin": "^13.6.0",
-    "firebase": "^12.9.0"
+    "firebase": "^12.9.0",
+    "firebase-admin": "^13.6.0"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.27",
     "googleapis": "^157.0.0",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }
