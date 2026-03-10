@@ -7,10 +7,13 @@ import { auth, firestore } from "@/lib/firebase";
 import { DataTable } from "../components/DataTable";
 import { StatCard } from "../components/StatCard";
 import CrudRecordModal, { type CrudFieldDefinition } from "../components/modals/CrudRecordModal";
+import { WorkOrderModal, type WorkOrderFormValues } from "../components/WorkOrderModal";
+import { WorkOrderUploader } from "../components/WorkOrderUploader";
 import { dataLoader, type TableRow } from "../lib/dataLoader";
 import { TABLE_DEFINITIONS } from "../lib/tableDefinitions";
 
 type UserRole = "admin" | "sales" | "field" | "unknown";
+type ActiveTab = "jobs" | "workorders";
 
 const jobFields: CrudFieldDefinition[] = [
   { name: "customerId", label: "Customer ID", type: "text", required: true },
@@ -62,6 +65,7 @@ const toJobValues = (row: TableRow | null): Record<string, string> => ({
 });
 
 export default function ActiveJobsPage() {
+  const [activeTab, setActiveTab] = useState<ActiveTab>("jobs");
   const [jobs, setJobs] = useState<TableRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +74,8 @@ export default function ActiveJobsPage() {
   const [currentUserRole, setCurrentUserRole] = useState<UserRole>("unknown");
   const [currentUserUid, setCurrentUserUid] = useState<string | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
+  const [woModalMode, setWoModalMode] = useState<"create" | "edit" | null>(null);
+  const [showUploader, setShowUploader] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const canCreate = currentUserRole === "admin";
@@ -87,23 +93,29 @@ export default function ActiveJobsPage() {
     return Array.isArray(crew) && crew.includes(currentUserUid);
   }, [selectedRow, currentUserRole, currentUserUid]);
 
-  const filteredRows = useMemo(() => {
+  // All jobs
+  const allJobsFiltered = useMemo(() => {
     if (!statusFilter) return jobs;
     return jobs.filter((job) => String(job.status ?? "") === statusFilter);
   }, [jobs, statusFilter]);
+
+  // Work orders = open (non-completed) jobs
+  const workOrderRows = useMemo(() => {
+    const open = jobs.filter((job) => String(job.status ?? "") !== "completed");
+    if (!statusFilter) return open;
+    return open.filter((job) => String(job.status ?? "") === statusFilter);
+  }, [jobs, statusFilter]);
+
+  const displayRows = activeTab === "jobs" ? allJobsFiltered : workOrderRows;
 
   const stats = useMemo(() => {
     const scheduled = jobs.filter((job) => String(job.status ?? "") === "scheduled").length;
     const inProgress = jobs.filter((job) => String(job.status ?? "") === "in_progress").length;
     const completed = jobs.filter((job) => String(job.status ?? "") === "completed").length;
     const onHold = jobs.filter((job) => String(job.status ?? "") === "on_hold").length;
+    const openWorkOrders = jobs.filter((job) => String(job.status ?? "") !== "completed").length;
 
-    return {
-      scheduled,
-      inProgress,
-      completed,
-      onHold,
-    };
+    return { scheduled, inProgress, completed, onHold, openWorkOrders };
   }, [jobs]);
 
   const loadJobs = async () => {
@@ -209,37 +221,153 @@ export default function ActiveJobsPage() {
     }
   };
 
+  const handleWorkOrderSubmit = async (values: WorkOrderFormValues) => {
+    if (woModalMode === "create" && !canCreate) return;
+    if (woModalMode === "edit" && !canEditSelected) return;
+
+    const payload = {
+      // Store both new human-readable fields AND preserve legacy compat fields
+      customerId: values.customerId,
+      customerName: values.customerName,
+      estimateId: values.workOrderId || null,
+      workOrderId: values.workOrderId || null,
+      vendorId: values.vendorId || null,
+      vendorName: values.vendorName || null,
+      status: values.status || "scheduled",
+      schedule: {
+        installDate: values.installDate ? new Date(values.installDate) : null,
+        arrivalWindow: values.arrivalWindow || "",
+        crew: values.vendorId ? [values.vendorId] : [],
+      },
+      jobNotes: values.jobNotes || "",
+      photos: [],
+      completion: { completedAt: null, completedBy: null },
+    };
+
+    try {
+      setSubmitting(true);
+      if (woModalMode === "create") {
+        await dataLoader.createDocument("jobs", payload);
+      }
+      if (woModalMode === "edit" && selectedRow?.id) {
+        await dataLoader.updateDocument("jobs", String(selectedRow.id), payload);
+      }
+      setWoModalMode(null);
+      await loadJobs();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save work order.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-3xl font-semibold text-white">Active Jobs</h1>
-          <p className="mt-1 text-sm text-slate-400">Live job tracker and project management.</p>
+          <p className="mt-1 text-sm text-slate-400">Job tracker and work order management hub.</p>
         </div>
         <div className="flex gap-2">
           <button type="button" onClick={() => void loadJobs()} className="rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-200 hover:bg-white/10">
             Reload
           </button>
-          <button
-            type="button"
-            onClick={() => setModalMode("create")}
-            disabled={!canCreate}
-            className="rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Add Job
-          </button>
+          {activeTab === "workorders" ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowUploader((v) => !v)}
+                className="rounded-lg border border-amber-400/30 bg-amber-500/10 px-3 py-2 text-sm font-medium text-amber-200 hover:bg-amber-500/20"
+              >
+                Upload WO (Beta)
+              </button>
+              <button
+                type="button"
+                onClick={() => setWoModalMode("create")}
+                disabled={!canCreate}
+                className="rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Add Work Order
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setModalMode("create")}
+              disabled={!canCreate}
+              className="rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-3 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Add Job
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {/* Stats */}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <StatCard label="Scheduled" value={String(stats.scheduled)} sublabel="Ready to start" />
         <StatCard label="In Progress" value={String(stats.inProgress)} sublabel="Active installs" />
         <StatCard label="Completed" value={String(stats.completed)} sublabel="Finished jobs" />
         <StatCard label="On Hold" value={String(stats.onHold)} sublabel="Awaiting action" />
+        <StatCard label="Open Work Orders" value={String(stats.openWorkOrders)} sublabel="Non-completed" />
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-1 rounded-xl border border-white/10 bg-white/5 p-1 w-fit">
+        {(["jobs", "workorders"] as ActiveTab[]).map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => { setActiveTab(tab); setSelectedRow(null); setStatusFilter(null); }}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+              activeTab === tab
+                ? "bg-indigo-500 text-white"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            {tab === "jobs" ? "All Jobs" : "Work Orders"}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "workorders" ? (
+        <p className="text-xs text-slate-500">Work Orders shows all open (non-completed) jobs.</p>
+      ) : null}
+
+      {activeTab === "workorders" && showUploader ? (
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-white">Upload Work Order</h3>
+              <p className="text-xs text-slate-400">Photo, PDF, or scanned sheet — Beta</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowUploader(false)}
+              className="text-slate-400 hover:text-white"
+            >
+              ×
+            </button>
+          </div>
+          <WorkOrderUploader
+            onPrefill={(fields) => {
+              // Open the create modal with prefilled notes
+              setWoModalMode("create");
+              setShowUploader(false);
+              // Fields are available — future connection point for WorkOrderModal initialValues
+              console.log("Prefill fields from upload:", fields);
+            }}
+            onClose={() => setShowUploader(false)}
+          />
+        </div>
+      ) : null}
+
+      {/* Status filters */}
       <div className="flex flex-wrap items-center gap-2">
-        {["scheduled", "in_progress", "completed", "on_hold"].map((status) => (
+        {(activeTab === "jobs"
+          ? ["scheduled", "in_progress", "completed", "on_hold"]
+          : ["scheduled", "in_progress", "on_hold"]
+        ).map((status) => (
           <button
             key={status}
             type="button"
@@ -263,7 +391,7 @@ export default function ActiveJobsPage() {
         <div className="mt-2 flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => setModalMode("edit")}
+            onClick={() => activeTab === "workorders" ? setWoModalMode("edit") : setModalMode("edit")}
             disabled={!canEditSelected || submitting}
             className="rounded-md bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -281,9 +409,9 @@ export default function ActiveJobsPage() {
       </div>
 
       <DataTable
-        title="Active Jobs"
+        title={activeTab === "jobs" ? "Active Jobs" : "Work Orders"}
         columns={TABLE_DEFINITIONS.jobs}
-        rows={filteredRows}
+        rows={displayRows}
         loading={loading}
         onRowClick={setSelectedRow}
         highlightRowId={String(selectedRow?.id ?? "")}
@@ -298,6 +426,38 @@ export default function ActiveJobsPage() {
           submitting={submitting}
           onClose={() => setModalMode(null)}
           onSubmit={handleSubmit}
+        />
+      ) : null}
+
+      {woModalMode ? (
+        <WorkOrderModal
+          mode={woModalMode}
+          initialValues={woModalMode === "edit" && selectedRow ? {
+            customerId: String(selectedRow.customerId ?? ""),
+            customerName: String(selectedRow.customerName ?? ""),
+            workOrderId: String(selectedRow.estimateId ?? selectedRow.workOrderId ?? ""),
+            vendorId: String(selectedRow.vendorId ?? ""),
+            vendorName: String(selectedRow.vendorName ?? ""),
+            status: String(selectedRow.status ?? "scheduled"),
+            installDate: selectedRow.schedule && typeof selectedRow.schedule === "object"
+              ? (() => {
+                  const d = (selectedRow.schedule as { installDate?: unknown }).installDate;
+                  if (!d) return "";
+                  const src = typeof d === "object" && d && "toDate" in d
+                    ? (d as { toDate: () => Date }).toDate()
+                    : d;
+                  const date = new Date(String(src));
+                  return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
+                })()
+              : "",
+            arrivalWindow: selectedRow.schedule && typeof selectedRow.schedule === "object"
+              ? String((selectedRow.schedule as { arrivalWindow?: string }).arrivalWindow ?? "")
+              : "",
+            jobNotes: String(selectedRow.jobNotes ?? ""),
+          } : undefined}
+          submitting={submitting}
+          onClose={() => setWoModalMode(null)}
+          onSubmit={handleWorkOrderSubmit}
         />
       ) : null}
     </div>

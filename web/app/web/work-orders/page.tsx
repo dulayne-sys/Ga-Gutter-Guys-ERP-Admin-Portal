@@ -1,6 +1,15 @@
 "use client";
 
+/**
+ * Work Orders — Compatibility Page
+ *
+ * Work Orders are now managed inside Active Jobs (Work Orders tab).
+ * This page preserves the /web/work-orders route for any existing deep-links
+ * and provides a seamless hand-off.
+ */
+
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, firestore } from "@/lib/firebase";
@@ -249,6 +258,12 @@ export default function WorkOrdersPage() {
           <p className="mt-1 text-sm text-slate-400">Crew scheduling, install windows, and execution notes.</p>
         </div>
         <div className="flex gap-2">
+          <Link
+            href="/web/active-jobs"
+            className="rounded-lg border border-indigo-400/40 bg-indigo-500/10 px-3 py-2 text-sm font-medium text-indigo-200 hover:bg-indigo-500/20"
+          >
+            Open in Active Jobs
+          </Link>
           <button type="button" onClick={() => void loadWorkOrders()} className="rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-200 hover:bg-white/10">
             Reload
           </button>
@@ -261,6 +276,11 @@ export default function WorkOrdersPage() {
             Add Work Order
           </button>
         </div>
+      </div>
+
+      {/* Info banner */}
+      <div className="rounded-xl border border-indigo-400/30 bg-indigo-500/10 px-4 py-3 text-sm text-indigo-200">
+        Work Orders are now also accessible from the <strong>Active Jobs</strong> page via the <em>Work Orders</em> tab. This page is kept for backward compatibility.
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
